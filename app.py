@@ -207,8 +207,13 @@ def get_gsheet_connection():
     # Load credentials from local JSON file
     script_dir = os.path.dirname(os.path.abspath(__file__))
     local_creds_path = os.path.join(script_dir, "credentials", "trans-gate-487602-f9-3de95a294459.json")
-    creds = Credentials.from_service_account_file(local_creds_path, scopes=SCOPES)
-
+    if os.path.exists(local_creds_path):
+        # LOCAL: use JSON file
+        creds = Credentials.from_service_account_file(local_creds_path, scopes=SCOPES)
+    else:
+        # CLOUD: use Streamlit secrets
+        creds_dict = json.loads(st.secrets["GOOGLE_CREDS"])
+        creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key(SHEET_ID)
 
@@ -556,4 +561,5 @@ elif menu == "Database":
         st.link_button(
             "📊 Open Google Sheet",     
             f"https://docs.google.com/spreadsheets/d/{"1rBJ7i3_XNdXVH4yU4sQ1SLYx3Ds-PnKBvsL2QHMVqB4"}/edit",
+
         )
