@@ -4,3 +4,5 @@ requests
 feedparser
 beautifulsoup4
 altair
+gspread
+google-auth
